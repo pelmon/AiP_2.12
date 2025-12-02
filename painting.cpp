@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 namespace topit{
     struct p_t{ int x, y;};
     struct f_t{p_t aa, bb;};
@@ -34,9 +35,9 @@ int main()
     size_t s = 0;
     try{
         shp[0] = new Dot({0, 0});
-        shp[1] = new Dot({2, 3});
+        shp[1] = new Dot({2, 4});
         shp[2] = new Dot({-5, -2});
-        for(size_t i = 0; i < 3; i++){
+        for(size_t i = 0; i < 3; ++i){
             append(shp[i], &pts, s);
         }
         f_t fr = frame(pts, s);
@@ -91,7 +92,7 @@ void topit::flush(std::ostream& os, const char* cnv, f_t fr){
         os << "\n";
     }
 }
-char * topit::canvas(f_t fr,  char fill){
+char * topit::canvas(f_t fr, char fill){
     size_t s = rows(fr) * cols(fr);
     char * c = new char[s];
     for(size_t i = 0; i < s; ++i){
