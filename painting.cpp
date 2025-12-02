@@ -1,28 +1,46 @@
 #include <iostream>
 namespace topit{
     struct p_t{ int x, y;};
-    struct f_t {p_t aa, bb;};
+    struct f_t{p_t aa, bb;};
     bool operator == (p_t a, p_t b);
     bool operator != (p_t a, p_t b);
-    struct IDraw {
+    struct IDraw{
         virtual ~IDraw() = default;
         virtual p_t begin() const = 0;
         virtual p_t next(p_t prev) const = 0;
     };
-    struct Dot: IDraw {
+    struct Dot: IDraw{
         explicit Dot(p_t dd);
         p_t begin() const override;
         p_t next(p_t prev) const override; 
         p_t d;
     };
+    void append(const IDraw* sh, p_t** ppts, size_t& s);
 }
 int main()
 {
     using namespace topit;
+    int err = 0;
     IDraw* shp[3] = {};
+    try{
+        shp[0] = new Dot({0, 0});
+        shp[1] = new Dot({2, 3});
+        shp[2] = new Dot({-5, -2});
+        for(size_t i = 0; i < 3; i++){
+            append(shp[i], &pts, s);
+        }
+    }
+    catch(...) {
+        std::cerr<< "Error!\n";
+        err = 1;
+    }
+    delete shp[1];
+    delete shp[0];
+    return err;
 }
 topit::Dot::Dot(p_t dd):
- d(dd)
+ IDraw(),
+ d{dd}
 {}
 topit::p_t topit::Dot::begin() const {
     return d;
