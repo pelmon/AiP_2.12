@@ -18,6 +18,13 @@ namespace topit{
         p_t next(p_t prev) const override; 
         p_t d;
     };
+    struct StraightLine: IDraw{
+        explicit StraightLine(p_t start_point, p_t end_point);
+        p_t begin() const override;
+        p_t next(p_t prev) const override;
+        p_t start;
+        p_t end;
+    };
     p_t* extend(const p_t* pts, size_t s, p_t fill);
     void extend(p_t** pts, size_t& s, p_t fill);
     void append(const IDraw* sh, p_t** ppts, size_t& s);
@@ -30,13 +37,14 @@ int main()
 {
     using namespace topit;
     int err = 0;
-    IDraw* shp[3] = {};
+    IDraw* shp[4] = {};
     p_t * pts = nullptr;
     size_t s = 0;
     try{
         shp[0] = new Dot({0, 0});
         shp[1] = new Dot({2, 4});
         shp[2] = new Dot({-5, -2});
+        shp[3] = new StraightLine({-5, 2}, {5, 2});
         for(size_t i = 0; i < 3; ++i){
             append(shp[i], &pts, s);
         }
@@ -52,6 +60,7 @@ int main()
         std::cerr<< "Error!\n";
         err = 1;
     }
+    delete shp[3];
     delete shp[2];
     delete shp[1];
     delete shp[0];
@@ -125,6 +134,26 @@ topit::p_t topit::Dot::next(p_t prev) const {
         throw std::logic_error("bad prev");
     }
     return d;
+}
+topit::StraightLine::StraightLine(p_t start_point, p_t end_point):
+ start(start_point), end(end_point)
+{}
+topit::p_t topit::StraightLine::begin() const{
+    return start;
+}
+topit::p_t topit::StraightLine::next(p_t prev) const{
+    int len = end.x - start.x;
+    if(prev == start){
+        if(len > 1){
+            return {start.x, start.y};
+        }
+        return start;
+    }
+    int CurPos = prev.x - start.x;
+    if(CurPos < len - 1){
+        return {prev.x, prev.y};
+    }
+    return start;
 }
 size_t topit::rows(f_t fr){
     return (fr.bb.y - fr.aa.y + 1);
