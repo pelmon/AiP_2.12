@@ -44,7 +44,7 @@ int main()
         shp[0] = new Dot({0, 0});
         shp[1] = new Dot({2, 4});
         shp[2] = new Dot({-5, -2});
-        shp[3] = new StraightLine({-5, 2}, {5, 2});
+        shp[3] = new StraightLine({-5, 2}, {2, 2});
         for(size_t i = 0; i < 3; ++i){
             append(shp[i], &pts, s);
         }
@@ -136,24 +136,24 @@ topit::p_t topit::Dot::next(p_t prev) const {
     return d;
 }
 topit::StraightLine::StraightLine(p_t start_point, p_t end_point):
- start(start_point), end(end_point)
+ start{start_point}, end{end_point}
 {}
 topit::p_t topit::StraightLine::begin() const{
     return start;
 }
 topit::p_t topit::StraightLine::next(p_t prev) const{
-    int len = end.x - start.x;
-    if(prev == start){
-        if(len > 1){
-            return {start.x, start.y};
-        }
+    if (prev == end) {
         return start;
     }
-    int CurPos = prev.x - start.x;
-    if(CurPos < len - 1){
-        return {prev.x, prev.y};
+    p_t next = prev;
+    if (prev.x < end.x) {
+        next.x = prev.x + 1;
+    } 
+    else if (prev.x > end.x) {
+        next.x = prev.x - 1;
     }
-    return start;
+    next.y = start.y;
+    return next;
 }
 size_t topit::rows(f_t fr){
     return (fr.bb.y - fr.aa.y + 1);
