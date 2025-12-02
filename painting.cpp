@@ -106,8 +106,8 @@ topit::f_t topit::frame(const p_t* pts, size_t s){
     for(size_t i = 1; i < s; ++i){
         minx = std::min(minx, pts[i].x);
         miny = std::min(miny, pts[i].y);
-        maxx = std::min(maxx, pts[i].x);
-        maxy = std::min(maxy, pts[i].y);
+        maxx = std::max(maxx, pts[i].x);
+        maxy = std::max(maxy, pts[i].y);
     }
     p_t a{minx, miny};
     p_t b{maxx, maxy};
