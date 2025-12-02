@@ -26,6 +26,8 @@ int main()
     using namespace topit;
     int err = 0;
     IDraw* shp[3] = {};
+    p_t * pts = nullptr;
+    size_t s = 0;
     try{
         shp[0] = new Dot({0, 0});
         shp[1] = new Dot({2, 3});
