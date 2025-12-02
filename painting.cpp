@@ -2,8 +2,8 @@
 namespace topit{
     struct p_t{ int x, y;};
     struct f_t{p_t aa, bb;};
-
-
+    size_t rows(f_t ft);
+    size_t cols(f_t fr);
     bool operator == (p_t a, p_t b);
     bool operator != (p_t a, p_t b);
     struct IDraw{
@@ -17,6 +17,7 @@ namespace topit{
         p_t next(p_t prev) const override; 
         p_t d;
     };
+    p_t* extend(const p_t* pts, size_t s, p_t fill);
     void append(const IDraw* sh, p_t** ppts, size_t& s);
     f_t frame(const p_t * pts, size_t s);
     char * canvas(f_t fr, char fill);
@@ -53,6 +54,22 @@ int main()
     delete shp[1];
     delete shp[0];
     return err;
+}
+topit::p_t* topit::extend(const p_t* pts, size_t s, p_t fill){
+    p_t* r = new p_t[s+1];
+    for (size_t i = 0; i < s; ++i){
+        r[i] = pts[i];
+    }
+    r[s] = fill;
+    return r;
+}
+void topit::append(const IDraw* sh, p_t** ppts, size_t& s){
+
+}
+void topit::paint(p_t p, char * cnv, f_t fr, char fill){
+    size_t dx = p.x - fr.aa.x;
+    size_t dy = fr.bb.y - p.y;
+    cnv[dy * cols(fr) + dx] = fill;
 }
 void topit::flush(std::ostream& os, const char* cnv, f_t fr){
     for(size_t i = 0; i< rows(fr); ++i){
@@ -105,7 +122,6 @@ size_t topit::cols(f_t fr){
 bool topit::operator == (p_t a, p_t b){
     return a.x == b.x && a.y == b.y;
 }
-
 bool topit::operator != (p_t a, p_t b){
     return !(a==b);
 }
