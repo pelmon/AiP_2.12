@@ -18,6 +18,7 @@ namespace topit{
         p_t d;
     };
     p_t* extend(const p_t* pts, size_t s, p_t fill);
+    void extend(p_t** pts, size_t& s, p_t fill);
     void append(const IDraw* sh, p_t** ppts, size_t& s);
     f_t frame(const p_t * pts, size_t s);
     char * canvas(f_t fr, char fill);
@@ -63,8 +64,19 @@ topit::p_t* topit::extend(const p_t* pts, size_t s, p_t fill){
     r[s] = fill;
     return r;
 }
+void topit::extend(p_t** pts, size_t& s, p_t fill) {
+    p_t* r = extend(*pts, s, fill);
+    delete [] *pts;
+    ++s;
+    *pts = r;
+}
 void topit::append(const IDraw* sh, p_t** ppts, size_t& s){
-
+    extend(ppts, s, sh->begin());
+    p_t b = sh->begin();
+    while(sh->next(b) != sh->begin()){
+        b = sh->next(b);
+        extend(ppts, s, b);
+    }
 }
 void topit::paint(p_t p, char * cnv, f_t fr, char fill){
     size_t dx = p.x - fr.aa.x;
@@ -76,11 +88,11 @@ void topit::flush(std::ostream& os, const char* cnv, f_t fr){
         for(size_t j = 0; j < cols(fr); ++j){
             os << cnv[i * cols(fr) + j];
         }
-        os << "\n"
+        os << "\n";
     }
 }
 char * topit::canvas(f_t fr,  char fill){
-    size_t s rows(fr) * cols(fr);
+    size_t s = rows(fr) * cols(fr);
     char * c = new char[s];
     for(size_t i = 0; i < s; ++i){
         c[i] = fill;
@@ -113,7 +125,7 @@ topit::p_t topit::Dot::next(p_t prev) const {
     }
     return d;
 }
-size_t topit::rows(f_t ft){
+size_t topit::rows(f_t fr){
     return (fr.bb.y - fr.aa.y + 1);
 }
 size_t topit::cols(f_t fr){
