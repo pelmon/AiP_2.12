@@ -42,7 +42,7 @@ int main()
     size_t s = 0;
     try{
         shp[0] = new Dot({0, 0});
-        shp[1] = new Dot({2, 4});
+        shp[1] = new Rect({-1, -1}, {5, 4});
         shp[2] = new Dot({-5, -2});
         for(size_t i = 0; i < 3; ++i){
             append(shp[i], &pts, s);
@@ -120,7 +120,7 @@ topit::f_t topit::frame(const p_t* pts, size_t s){
     p_t b{maxx, maxy};
     return f_t{a, b};
 }
-topit::Rect:;Rect(p_t pos, int w, int h):
+topit::Rect::Rect(p_t pos, int w, int h):
     rect{pos, {pos.x + w, pos.y + h}}
     {
         if (!(w > 0 && h > 0)){
@@ -142,6 +142,21 @@ topit::p_t topit::Dot::next(p_t prev) const {
         throw std::logic_error("bad prev");
     }
     return d;
+}
+topit::p_t topit::Rect::begin() const {
+    return rect.aa;
+}
+topit::p_t topit::Rect::next(p_t prev) const{
+    if(prev.x == rect.aa.x && prev.y < rect.bb.y){
+        return {prev.x, prev.y + 1};
+    }else if (prev.y == rect.bb.y && prev.x < rect.bb.x){
+        return {prev.x + 1, prev.y};
+    }else if (prev.x == rect.bb.x && prev.y > rect.aa.y){
+        return {prev.x, prev.y - 1};
+    }else if (prev.y == rect.aa.y && prev.x > rect.aa.x){
+        return {prev.x - 1, prev.y};
+    }
+    throw std::logic_error("bad impl");
 }
 size_t topit::rows(f_t fr){
     return (fr.bb.y - fr.aa.y + 1);
